@@ -144,7 +144,7 @@ function Pricing() {
             <PricingFooter>
               <Divider />
               <Price>0$</Price>
-              <Button variant="contained" color="secondary" fullWidth>
+              <Button href='/docs/start/introduction' variant="contained" color="secondary" fullWidth>
                 Get Started
               </Button>
             </PricingFooter>
