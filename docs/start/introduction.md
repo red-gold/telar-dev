@@ -11,11 +11,11 @@ Telar Social provided a full-stack solution to build a Social Network with lates
 
 
 ## Highlights
-- Open source community version: run your social network with no charge with MIT License
-- Microservice and serveless: highly scalable, flexible, team performance, easy to debug and maintain.
-- Run anywhere: public cloud, private cloud, on-premise cloud and even on raspberry pi with [faasd](https://github.com/openfaas/faasd)!
-- Support million active users: running on kubernetes to handle large number of users
-- Standard material UI design: using powerful [material-ui](https://material-ui.com/) library for faster and easier web development.
+- **Open source community version:** run your social network with no charge under MIT License
+- **Microservice and serveless:** highly scalable, flexible, increasing team performance, easy to debug and maintain.
+- **Run anywhere:** public cloud, private cloud, on-premise cloud and even on raspberry pi with [faasd](https://github.com/openfaas/faasd)!
+- **Support million active users:** built for kubernetes to handle large number of users traffic
+- **Standard material UI design:** using powerful [material-ui](https://material-ui.com/) library for faster and easier web development.
 
 ## Main Tools
 - Golang (API)
@@ -34,4 +34,4 @@ Telar Social provided a full-stack solution to build a Social Network with lates
 - [Telar Social Blog](/blog): read latest news from Telar Social
 
 ### Become a Sponsor
-Like the project? help us to keep community alive via [patreon](https://www.patreon.com/qolzam)
+Interested in our project? help us to keep community alive via [patreon](https://www.patreon.com/qolzam)

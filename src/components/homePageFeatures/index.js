@@ -32,7 +32,7 @@ const FeatureList = [
   },
   {
     title: 'Artificial intelligence',
-    src: '../../../static/img/ai.svg',
+    src: '/img/ai.svg',
     description: (
       <>
         Smart solution at enterprise scale based on AI/ML technologies.
@@ -61,7 +61,7 @@ const FeatureList = [
   },
   {
     title: 'Sync in real-time',
-    src: '../../../static/img/sync.svg',
+    src: '/img/sync.svg',
     description: (
       <>
         Enable real time data transfering for fast interaction between frontend and backend.

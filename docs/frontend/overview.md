@@ -12,7 +12,7 @@ This page give you an overview of Telar Scoial UI and things are working togethe
 
 :::info
 
-You can find Telar Social UI repository [here](https://github.com/red-gold/ts-ui).
+Find Telar Social UI repository [here](https://github.com/red-gold/ts-ui).
 
 :::
 ## Directory Structure

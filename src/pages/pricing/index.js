@@ -201,10 +201,6 @@ function Pricing() {
                 </CheckItem>
                 <CheckItem>
                   <CheckIcon />
-                  Double License
-                </CheckItem>
-                <CheckItem>
-                  <CheckIcon />
                   Free Upgrade
                 </CheckItem>
                 <CheckItem>
