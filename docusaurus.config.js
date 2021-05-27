@@ -84,6 +84,10 @@ module.exports = {
               label: 'GitHub',
               href: 'https://github.com/red-gold/ts-ui',
             },
+            {
+              label: 'Icons made by Freepik',
+              href: 'https://www.freepik.com'
+            }
           ],
         },
       ],
