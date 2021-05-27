@@ -8,7 +8,7 @@ const FeatureList = [
     src: 'https://miro.medium.com/max/3600/1*afkK1deEdJkuN3IhnzuzKg.png',
     description: (
       <>
-        High Availability.Reducing resource costs.Ease-of-use and portability.Scalability and modularity.
+        High Availability. Reducing resource costs. Ease-of-use and portability. Scalability and modularity.
       </>
     ),
   },
@@ -17,7 +17,7 @@ const FeatureList = [
     src: 'https://blog.golang.org/lib/godoc/images/go-logo-blue.svg',
     description: (
       <>
-        Microservices are wtitten in Golang to have concurrency, simplicity and consistency for higher performance.
+        Microservices are written in Golang to have concurrency, simplicity and consistency for higher performance.
       </>
     ),
   },
