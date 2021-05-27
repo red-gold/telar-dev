@@ -5,7 +5,7 @@ sidebar_position: 2
 # Installation
 
 Telar Social backend can be deployed to a variety of container orchestrators such as Kubernetes, OpenShift, Docker Swarm or to a single host with faasd and docker-compose.
-Frontend can be deployed to the same infrastruction or hosting on [Firebase hosting](https://firebase.google.com/docs/hosting), [AWS web hosting](https://aws.amazon.com/websites/), [Netlify](https://www.netlify.com/), [Render](https://render.com), or [Vercel](https://vercel.com/) separately.
+Frontend can be deployed to the same infrastructure or hosting on [Firebase hosting](https://firebase.google.com/docs/hosting), [AWS web hosting](https://aws.amazon.com/websites/), [Netlify](https://www.netlify.com/), [Render](https://render.com), or [Vercel](https://vercel.com/) separately.
 
 
 ## Running locally (Development)
