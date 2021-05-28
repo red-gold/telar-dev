@@ -94,19 +94,9 @@ module.exports = {
       copyright: `Copyright © ${new Date().getFullYear()} Telar.dev.`,
     },
     algolia: {
-      apiKey: 'YOUR_API_KEY',
-      indexName: 'YOUR_INDEX_NAME',
-
-      // Optional: see doc section below
-      contextualSearch: true,
-
-      // Optional: see doc section below
-      appId: 'YOUR_APP_ID',
-
-      // Optional: Algolia search parameters
-      searchParameters: {},
-
-      //... other Algolia params
+      apiKey: 'bccc1fe398ee452cf7837939baf26b83',
+      indexName: 'telar',
+      contextualSearch: false,
     },
   },
   presets: [
