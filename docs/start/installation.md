@@ -155,4 +155,111 @@ inlets is considered production-ready, but you should do some testing before you
 
 - **[Cloudflare](https://developers.cloudflare.com/argo-tunnel/):** You can connect applications, servers, and other resources to Cloudflare's network using Cloudflare Tunnel. When connected, Cloudflare can apply Zero Trust policies to determine who can reach the resource.
 
+## Config Traefik for Telar Social
+Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them.
+
+We also config DNS challenge to resolve certificate by Let's Encrypt. We used `digitalocean` provider as an example but you can find your own provider [here](https://doc.traefik.io/traefik/v2.0/https/acme/#providers)
+
+#### Create secret for certificate resolver
+Change `digitalocean` with your provider name and replace `your_token` with your token.
+
+```sh
+
+kubectl create secret -n kube-system generic digitalocean --from-literal=dns-token=your_token
+
+```
+
+#### Deploy Traefik on K8S cluster
+Excute command below to deploy Traefik. Before that, change `my@email.com` to your email and `digitalocean` to your provider.
+
+> In command below we use letsencrypt in `production` mode if you are in development statge you can change it to `staging`.
+> 
+> letsencrypt production: https://acme-v02.api.letsencrypt.org/directory
+> 
+> letsencrypt staging: https://acme-staging-v02.api.letsencrypt.org/directory
+
+
+```sh
+helm install --namespace=kube-system \
+    --set="additionalArguments={--accesslog=true,--api.insecure=true,--log.level=DEBUG,--certificatesresolvers.letsencrypt.acme.email=my@email.com,--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json,--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory,--certificatesResolvers.letsencrypt.acme.dnschallenge=true,--certificatesResolvers.letsencrypt.acme.dnschallenge.provider=digitalocean}" \
+    --set="env[0].name=DO_AUTH_TOKEN" \
+    --set="env[0].valueFrom.secretKeyRef.name=digitalocean" \
+    --set="env[0].valueFrom.secretKeyRef.key=dns-token" \
+    traefik traefik/traefik
+```
+
+#### Deploy Telar Social functions ingress route
+To have a pretty URL we use `social-middleware-gateway` ingress route to have `https://my.social.com/*` URL instead of `https://my.social.com/function/*`. The `ingress-route-social` ingress route will route requests to `OpenFaaS` gateway service.
+
+```sh title="social-middleware-gateway.yml"
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: social-middleware-gateway
+spec:
+  addPrefix:
+    prefix: /function
+
+```
+
+
+```sh title="ingress-route-social.yml"
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingress-route-social
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`my.social.com`)
+      kind: Rule
+      middlewares:
+        - name: social-middleware-gateway
+          namespace: default
+      services:
+        - name: gateway
+          namespace: openfaas
+          kind: Service
+          port: 8080
+  tls:
+    certResolver: letsencrypt
+    domains:
+    - main: my.social.com
+      sans:
+      - '*.my.social.com'
+
+```
+
+
+#### Deploy WebSocket ingress route
+
+```sh title="ws-ingress.yml"
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ws-ingress
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`ws.social.com`)
+      kind: Rule
+      services:
+        - name: ws-service
+          namespace: openfaas-fn
+          kind: Service
+          port: 3001
+  tls:
+    certResolver: letsencrypt
+    domains:
+    - main: social.com
+      sans:
+      - '*.social.com'
+
+```
+
 > ⭐️ This page needs help. Please help with your contribution. To start click on edit button.
