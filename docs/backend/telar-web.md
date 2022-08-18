@@ -16,7 +16,7 @@ Find Telar Web repository [here](https://github.com/red-gold/telar-web).
 
 ```yml title="app_config.yml"
 environment:
-  app_name: Telar Social # You app name
+  app_name: Telar Social # Your app name
   base_route_domain: "" # In the case you are using a domain like `mysocial.com/social` instead of `mysocial.com` you need to set this field `/social`
   db_type: mongo # Type of Database (Right now we only support mongodb for Telar Social community version)
   header_cookie_name: he # Cookie name for JWT header
