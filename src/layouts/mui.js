@@ -3,28 +3,33 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 import React from "react";
-import { createTheme } from "@material-ui/core/styles";
-import ThemeProvider from "@material-ui/core/styles/ThemeProvider";
-import useThemeContext from "@theme/hooks/useThemeContext";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { useColorMode } from "@docusaurus/theme-common";
 
 function MuiLayout(props) {
-  const { isDarkTheme } = useThemeContext();
+  const { isDarkTheme } = useColorMode();
   const theme = React.useMemo(
     () =>
       createTheme({
         palette: {
           mode: isDarkTheme ? "dark" : "light",
           primary: {
-            main: '#25c2a0'
+            main: "#25c2a0",
           },
           secondary: {
-            main: '#6c5ce7'
-          }
+            main: "#6c5ce7",
+          },
         },
       }),
     [isDarkTheme]
   );
-  return <ThemeProvider theme={theme}>{props.children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {props.children}
+    </ThemeProvider>
+  );
 }
 
 export default MuiLayout;

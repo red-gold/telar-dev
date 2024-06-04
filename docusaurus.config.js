@@ -1,124 +1,141 @@
-/** @type {import('@docusaurus/types').DocusaurusConfig} */
-module.exports = {
-  title: 'Telar',
-  tagline: 'A cloud native social network engine designed based on Microservice and Serverless architecture',
-  url: 'https://telar.dev',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+import { themes as prismThemes } from "prism-react-renderer";
+
+/** @type {import('@docusaurus/types').Config} */
+const config = {
+  title: "Telar",
+  tagline:
+    "A cloud native social network engine designed based on Microservice and Serverless architecture",
+  url: "https://telar.dev",
+  baseUrl: "/",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
+  favicon: "img/favicon.ico",
+  organizationName: "telar", // Usually your GitHub org/user name.
+  projectName: "telar-social", // Usually your repo name.
+  // Even if you don't use internationalization, you can use this field to set
+  // useful metadata like html lang. For example, if your site is Chinese, you
+  // may want to replace "en" with "zh-Hans".
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en"],
+  },
   themeConfig: {
     navbar: {
-      title: 'Telar',
+      title: "Telar",
       logo: {
-        alt: 'Telar',
-        src: 'img/logo.svg',
+        alt: "Telar",
+        src: "img/logo.svg",
       },
       items: [
         {
-          to: 'docs/start/introduction',
-          position: 'left',
-          label: 'Docs',
+          to: "docs/start/introduction",
+          position: "left",
+          label: "Docs",
         },
         {
-          position: 'left',
-          to: '/pricing',
-          label: 'Pricing',
+          position: "left",
+          to: "/pricing",
+          label: "Pricing",
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        { to: "/blog", label: "Blog", position: "left" },
         {
-          type: 'docsVersionDropdown',
-          position: 'right',
+          type: "docsVersionDropdown",
+          position: "right",
           dropdownActiveClassDisabled: true,
           dropdownItemsAfter: [
-            { to: 'https://telar.dev/', label: 'v1 - Legacy' }
-          ]
+            { to: "https://telar.dev/", label: "v1 - Legacy" },
+          ],
         },
 
         {
-          href: 'https://github.com/telarpress/ts-ui/issues',
-          position: 'right',
-          className: 'header-github-link',
-          'aria-label': 'GitHub repository'
+          href: "https://github.com/telarpress/ts-ui/issues",
+          position: "right",
+          className: "header-github-link",
+          "aria-label": "GitHub repository",
         },
         {
-          href:
-            'https://docs.google.com/forms/d/e/1FAIpQLSdkwt5pxmyCZQO0AmyAghBOdA-XBG298Pfm5Dw1xjNGaGeCYQ/viewform',
-          className: 'slack-link',
-          'aria-label': 'Slack',
-          position: 'right'
-        }
+          href: "https://docs.google.com/forms/d/e/1FAIpQLSdkwt5pxmyCZQO0AmyAghBOdA-XBG298Pfm5Dw1xjNGaGeCYQ/viewform",
+          className: "slack-link",
+          "aria-label": "Slack",
+          position: "right",
+        },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/start/introduction',
+              label: "Tutorial",
+              to: "/docs/start/introduction",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'Slack',
-              href: 'https://docs.google.com/forms/d/e/1FAIpQLSdkwt5pxmyCZQO0AmyAghBOdA-XBG298Pfm5Dw1xjNGaGeCYQ/viewform',
+              label: "Slack",
+              href: "https://docs.google.com/forms/d/e/1FAIpQLSdkwt5pxmyCZQO0AmyAghBOdA-XBG298Pfm5Dw1xjNGaGeCYQ/viewform",
             },
           ],
         },
         {
-          title: 'More',
+          title: "More",
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
+              label: "Blog",
+              to: "/blog",
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/red-gold/ts-ui',
+              label: "GitHub",
+              href: "https://github.com/red-gold/ts-ui",
             },
             {
-              label: 'Icons made by Freepik',
-              href: 'https://www.freepik.com'
-            }
+              label: "Icons made by Freepik",
+              href: "https://www.freepik.com",
+            },
           ],
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Telar.dev.`,
     },
+    prism: {
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+    },
     algolia: {
-      apiKey: 'bccc1fe398ee452cf7837939baf26b83',
-      indexName: 'telar',
+      appId: "P7LGI7V52V",
+      apiKey: "3ef09db438c0119bd9bf865c58946b09",
+      indexName: "telar",
       contextualSearch: false,
     },
   },
   presets: [
     [
-      '@docusaurus/preset-classic',
-      {
+      "classic",
+      /** @type {import('@docusaurus/preset-classic').Options} */
+      ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: "./sidebars.js",
           // Please change this to your repo.
-          editUrl:
-            'https://github.com/red-gold/telar-dev/edit/master/',
+          // Remove this to remove the "edit this page" links.
+          editUrl: "https://github.com/red-gold/telar-dev/edit/master/",
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl:
-            'https://github.com/red-gold/telar-dev/edit/master/blog/',
+          // Remove this to remove the "edit this page" links.
+          editUrl: "https://github.com/red-gold/telar-dev/edit/master/blog/",
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: "./src/css/custom.css",
         },
-      },
+      }),
     ],
   ],
 };
+
+export default config;

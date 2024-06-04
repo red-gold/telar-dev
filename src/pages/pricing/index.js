@@ -4,27 +4,24 @@
 // https://opensource.org/licenses/MIT
 
 import React from "react";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Avatar from "@material-ui/core/Avatar";
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Avatar from "@mui/material/Avatar";
 
-import Grid from "@material-ui/core/Grid";
-import {
-  experimentalStyled as styled,
-  useTheme,
-} from "@material-ui/core/styles";
-import CommunityIcon from "@material-ui/icons/PeopleRounded";
-import RawCheckIcon from "@material-ui/icons/CheckRounded";
-import RawConstructionIcon from "@material-ui/icons/HandymanRounded";
-import RawOptionIcon from '@material-ui/icons/RadioButtonUncheckedRounded';
-import ProfessionalIcon from "@material-ui/icons/TrainRounded";
-import EnterpriseIcon from "@material-ui/icons/AirplanemodeActiveRounded";
-import CustomIcon from "@material-ui/icons/DashboardCustomize";
-import { green, yellow } from "@material-ui/core/colors";
-import Divider from "@material-ui/core/Divider";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import { experimentalStyled as styled, useTheme } from "@mui/material/styles";
+import CommunityIcon from "@mui/icons-material/PeopleRounded";
+import RawCheckIcon from "@mui/icons-material/CheckRounded";
+import RawConstructionIcon from "@mui/icons-material/HandymanRounded";
+import RawOptionIcon from "@mui/icons-material/RadioButtonUncheckedRounded";
+import ProfessionalIcon from "@mui/icons-material/TrainRounded";
+import EnterpriseIcon from "@mui/icons-material/AirplanemodeActiveRounded";
+import CustomIcon from "@mui/icons-material/DashboardCustomize";
+import { green, yellow } from "@mui/material/colors";
+import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
 import MainLayout from "../../layouts/main";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip } from "@mui/material";
 
 const PricingItem = styled(Paper)(({ theme }) => ({
   // TODO withStyles removal
@@ -45,13 +42,13 @@ const PricingGridItem = styled(Grid)(({ theme }) => ({
 }));
 
 const ConstructionIcon = styled((props) => (
-<Tooltip title="Under development">
-  <RawConstructionIcon {...props} />
+  <Tooltip title="Under development">
+    <RawConstructionIcon {...props} />
   </Tooltip>
-  ))(({ theme }) => ({
+))(({ theme }) => ({
   marginRight: 5,
   color: yellow[600],
-  fontSize: 18
+  fontSize: 18,
 }));
 
 const CheckIcon = styled(RawCheckIcon)(({ theme }) => ({
@@ -133,7 +130,7 @@ function Pricing() {
                 </CheckItem>
                 <CheckItem>
                   <CheckIcon />
-                  PWA(Progressive Web App) 
+                  PWA(Progressive Web App)
                 </CheckItem>
                 <CheckItem>
                   <CheckIcon />
@@ -144,7 +141,12 @@ function Pricing() {
             <PricingFooter>
               <Divider />
               <Price>0$</Price>
-              <Button href='/docs/start/introduction' variant="contained" color="secondary" fullWidth>
+              <Button
+                href="/docs/start/introduction"
+                variant="contained"
+                color="secondary"
+                fullWidth
+              >
                 Get Started
               </Button>
             </PricingFooter>
@@ -181,7 +183,7 @@ function Pricing() {
                 </CheckItem>
                 <CheckItem>
                   <CheckIcon />
-                  PWA(Progressive Web App) 
+                  PWA(Progressive Web App)
                 </CheckItem>
                 <CheckItem>
                   <ConstructionIcon />
@@ -193,7 +195,7 @@ function Pricing() {
                 </CheckItem>
                 <CheckItem>
                   <ConstructionIcon />
-                  Push notifications  
+                  Push notifications
                 </CheckItem>
                 <CheckItem>
                   <CheckIcon />
@@ -212,7 +214,12 @@ function Pricing() {
             <PricingFooter>
               <Divider />
               <Price>Under Development</Price>
-              <Button href='mailto:sales@telar.dev' variant="outlined" color="secondary" fullWidth>
+              <Button
+                href="mailto:sales@telar.dev"
+                variant="outlined"
+                color="secondary"
+                fullWidth
+              >
                 Contact Us
               </Button>
             </PricingFooter>
@@ -273,7 +280,12 @@ function Pricing() {
             <PricingFooter>
               <Divider />
               <Price>Under Development</Price>
-              <Button href='mailto:sales@telar.dev' variant="outlined" color="secondary" fullWidth>
+              <Button
+                href="mailto:sales@telar.dev"
+                variant="outlined"
+                color="secondary"
+                fullWidth
+              >
                 Contact Us
               </Button>
             </PricingFooter>
@@ -282,13 +294,12 @@ function Pricing() {
 
         {/* Custom */}
         <PricingGridItem item xs={12} sm={6} md={4} alignItems="center">
-          <PricingItem
-          >
+          <PricingItem>
             <PricingHead>
               <Avatar
                 sx={{
                   margin: "auto",
-                  marginBottom: 1
+                  marginBottom: 1,
                 }}
               >
                 <CustomIcon />
@@ -324,15 +335,19 @@ function Pricing() {
             </PricingHead>
             <PricingFooter>
               <Divider />
-              <div style={{height:50}}/>
-              <Button href='mailto:sales@telar.dev' variant="outlined" color="secondary" fullWidth>
+              <div style={{ height: 50 }} />
+              <Button
+                href="mailto:sales@telar.dev"
+                variant="outlined"
+                color="secondary"
+                fullWidth
+              >
                 Contact Us
               </Button>
             </PricingFooter>
           </PricingItem>
         </PricingGridItem>
       </Grid>
-      
     </MainLayout>
   );
 }
