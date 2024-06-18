@@ -1,0 +1,532 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API to handle user relationships, including following, unfollowing, and managing circles.",
+        "title": "User Relationships micro API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "dev@telar.dev"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/red-gold/telar-web/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "social.faas.telar.dev",
+    "basePath": "/user-rels",
+    "paths": {
+        "/circle/{circleId}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Removes an existing circle identified by its ID from the user's list of circles. This operation allows users to manage their social circles more effectively by deleting unwanted or unused circles.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "circles"
+                ],
+                "summary": "Remove a circle",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the circle to be deleted",
+                        "name": "circleId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the circle.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the circleId is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the circle does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue deleting the circle.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/circles": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Updates the circles associated with a user relationship by specifying the user IDs and the new set of circle IDs. This operation allows for the dynamic management of user relationships and their associated circles.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "relationships"
+                ],
+                "summary": "Update user relationship circles",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The new set of circle IDs to associate with the user relationship",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.RelCirclesModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the user relationship circles."
+                    },
+                    "400": {
+                        "description": "Bad request if the request body is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified user relationship does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue updating the user relationship circles.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/follow": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Establishes a follow relationship between the current user and another user by their IDs. This operation allows users to follow each other, enhancing social connectivity within the platform.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "relationships"
+                ],
+                "summary": "Create follow relationship",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The details of the follow relationship to be established",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.FollowModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created the follow relationship.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the follow details are missing or not valid, or if the current user cannot be retrieved.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue creating the follow relationship.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/followers": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves a list of users who follow the specified user, identified by userID. This operation allows users to see who is following them, enhancing social connectivity and interaction.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "followers"
+                ],
+                "summary": "Retrieve followers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the list of followers.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.UserRel"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the userID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified user does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue retrieving the followers.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/following": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves a list of users that the specified user, identified by userID, is following. This operation allows users to see whom they are following, enhancing their social network and connectivity.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "following"
+                ],
+                "summary": "Retrieve following users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the list of users being followed.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.UserRel"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the userID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified user does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue retrieving the following list.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/unfollow/{userId}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Removes an existing follow relationship between the current user and another user identified by userID in the route parameter. This operation allows users to manage their social connections by unfollowing others.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "relationships"
+                ],
+                "summary": "Remove follow relationship",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the user to unfollow",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully removed the follow relationship.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the userID is missing or not valid, or if the current user cannot be retrieved.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the user to unfollow does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue removing the follow relationship.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.UserRel": {
+            "type": "object",
+            "properties": {
+                "circleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "left": {
+                    "$ref": "#/definitions/dto.UserRelMeta"
+                },
+                "leftId": {
+                    "type": "string"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "rel": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "right": {
+                    "$ref": "#/definitions/dto.UserRelMeta"
+                },
+                "rightId": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.UserRelMeta": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "banner": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "facebookId": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "instagramId": {
+                    "type": "string"
+                },
+                "linkedInId": {
+                    "type": "string"
+                },
+                "socialName": {
+                    "type": "string"
+                },
+                "twitterId": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.FollowModel": {
+            "type": "object",
+            "properties": {
+                "circleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "right": {
+                    "$ref": "#/definitions/models.RelMetaModel"
+                }
+            }
+        },
+        "models.RelCirclesModel": {
+            "type": "object",
+            "properties": {
+                "circleIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "rightId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.RelMetaModel": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.ErrorCodeMessage": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.TelarError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/utils.ErrorCodeMessage"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

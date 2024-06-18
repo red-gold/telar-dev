@@ -1,0 +1,793 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API to handle media operations",
+        "title": "Media micro API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "dev@telar.dev"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/red-gold/ts-serverless/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "social.faas.telar.dev",
+    "basePath": "/media",
+    "paths": {
+        "/": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves album entries based on search criteria including album ID, page, and limit for pagination.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Album"
+                ],
+                "summary": "Query albums",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Album's UUID to filter albums",
+                        "name": "album",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of albums to return per page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Array of album objects matching the query criteria",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Media"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Updates the information of a media item with the provided details contained in the request body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Update media item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Media item update information",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MediaModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Media item updated successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Authentication failed",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - Media item not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Creates a new media entry in the system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Create new media",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Create Media Model",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateMediaModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media successfully created",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "objectId": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/dir/{dir}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves all media items that are stored within a specified directory.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get media items by directory",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The directory path to query media items from",
+                        "name": "dir",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of media items found in the specified directory",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Media"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid directory path",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "No media items found in the specified directory",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Deletes a directory and its contents from the system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Directory"
+                ],
+                "summary": "Delete directory",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the directory to delete",
+                        "name": "dir",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Directory successfully deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid directory ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Directory not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/id/{mediaId}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves details of a specific media item by its unique identifier.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Get media item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Unique identifier of the media item",
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media item details",
+                        "schema": {
+                            "$ref": "#/definitions/models.MediaModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid media ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Media item not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Deletes a media entry from the system.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Delete media",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the media to delete",
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Media successfully deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid media ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/list": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Creates multiple media items with the details provided in the request body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Media"
+                ],
+                "summary": "Create multiple media items",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Media list creation request",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateMediaListModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Media items created successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Authentication failed",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "constants.UserPermissionConst": {
+            "type": "string",
+            "enum": [
+                "OnlyMe",
+                "Public",
+                "Circles",
+                "Custom"
+            ],
+            "x-enum-varnames": [
+                "OnlyMe",
+                "Public",
+                "Circles",
+                "Custom"
+            ]
+        },
+        "dto.Media": {
+            "type": "object",
+            "properties": {
+                "accessUserList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "albumId": {
+                    "type": "string"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deletedDate": {
+                    "type": "integer"
+                },
+                "directory": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fullPath": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "last_updated": {
+                    "type": "integer"
+                },
+                "meta": {
+                    "type": "string"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "permission": {
+                    "$ref": "#/definitions/constants.UserPermissionConst"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CreateMediaListModel": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MediaModel"
+                    }
+                }
+            }
+        },
+        "models.CreateMediaModel": {
+            "type": "object",
+            "properties": {
+                "accessUserList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "albumId": {
+                    "type": "string"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deletedDate": {
+                    "type": "integer"
+                },
+                "directory": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fullPath": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "last_updated": {
+                    "type": "integer"
+                },
+                "meta": {
+                    "type": "string"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "permission": {
+                    "$ref": "#/definitions/constants.UserPermissionConst"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.MediaModel": {
+            "type": "object",
+            "properties": {
+                "accessUserList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "albumId": {
+                    "type": "string"
+                },
+                "caption": {
+                    "type": "string"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deletedDate": {
+                    "type": "integer"
+                },
+                "directory": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fullPath": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "last_updated": {
+                    "type": "integer"
+                },
+                "meta": {
+                    "type": "string"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "permission": {
+                    "$ref": "#/definitions/constants.UserPermissionConst"
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.ErrorCodeMessage": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.TelarError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/utils.ErrorCodeMessage"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

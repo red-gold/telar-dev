@@ -1,0 +1,601 @@
+basePath: /comments
+definitions:
+  dto.Comment:
+    properties:
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      postId:
+        type: string
+      score:
+        type: integer
+      text:
+        type: string
+    type: object
+  models.CommentModel:
+    properties:
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      postId:
+        type: string
+      score:
+        type: integer
+      text:
+        type: string
+    type: object
+  models.CreateCommentModel:
+    properties:
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      postId:
+        type: string
+      score:
+        type: integer
+      text:
+        type: string
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This is an API to handle user comments on posts
+  license:
+    name: MIT
+    url: https://github.com/red-gold/telar-web/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Comments micro API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Fetches all comments linked to a given post, identified by its
+        unique post ID. Supports pagination through the page parameter.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique identifier of the post whose comments are to be retrieved
+        in: query
+        name: postId
+        required: true
+        type: string
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all comments for the specified post.
+          schema:
+            items:
+              $ref: '#/definitions/dto.Comment'
+            type: array
+        "400":
+          description: Bad request if the query parameters are invalid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "404":
+          description: Not found if no comments exist for the given post ID.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Get comments by post ID
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: Adds a new comment to the database.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The comment to add
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateCommentModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created the comment and returns the object ID.
+          schema:
+            properties:
+              objectId:
+                type: string
+            type: object
+        "400":
+          description: Bad request if the comment data is invalid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal server error for any other failures.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Create a new comment
+      tags:
+      - comments
+    put:
+      consumes:
+      - application/json
+      description: Updates the content of a specific comment based on its unique identifier.
+        This operation allows for the modification of comment details by the commenter
+        or authorized users.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The request body containing the updated comment details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the comment profiles.
+        "400":
+          description: Bad request if the request body or comment ID is invalid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized if the user is not authenticated or lacks permission
+            to update the comment.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "404":
+          description: Not found if the comment does not exist.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal server error if there's an issue updating the comment.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Update a comment
+      tags:
+      - comments
+  /{commentId}:
+    get:
+      consumes:
+      - application/json
+      description: Fetches a specific comment based on its unique identifier. This
+        operation is designed to provide detailed information about a single comment
+        to the requester.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique identifier of the comment to be retrieved
+        in: path
+        name: commentId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the comment.
+          schema:
+            $ref: '#/definitions/models.CommentModel'
+        "400":
+          description: Bad request if the comment ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the comment does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue fetching the comment.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Get a comment by ID
+      tags:
+      - comments
+  /id/{commentId}/post/{postId}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a comment based on its unique identifier and the post it
+        belongs to. This operation allows for the removal of comments by the commenter
+        or authorized users, ensuring the comment is accurately identified within
+        the context of its post.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique identifier of the comment to be deleted
+        in: path
+        name: commentId
+        required: true
+        type: string
+      - description: The unique identifier of the post associated with the comment
+          to be deleted
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the comment.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the comment ID or post ID is missing or not
+            valid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized if the user is not authenticated or lacks permission
+            to delete the comment.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "404":
+          description: Not found if the comment or post does not exist.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal server error if there's an issue deleting the comment.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Delete a comment from a post
+      tags:
+      - comments
+  /post/{postId}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes all comments associated with a given post ID. This operation
+        is intended for removing all comments from a specific post, identified by
+        its unique post ID.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique identifier of the post whose comments are to be deleted
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted all comments associated with the post
+            ID.
+        "400":
+          description: Bad request if the post ID is missing or not valid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal server error if there's an issue deleting the comments.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Delete comments by post ID
+      tags:
+      - comments
+  /profile:
+    put:
+      consumes:
+      - application/json
+      description: Updates the profile information (such as the user's name or avatar)
+        in all comments made by a specific user. This operation is crucial for maintaining
+        consistency in how user information appears across comments after a profile
+        update.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the comment profiles.
+        "400":
+          description: Bad request if the request body or user ID is invalid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized if the user is not authenticated or lacks permission
+            to update comment profiles.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "404":
+          description: Not found if the user does not exist.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal server error if there's an issue updating the comment
+            profiles.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Update comment profile
+      tags:
+      - comments
+  /query:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of comments based on provided query parameters
+        such as postId, userId, etc. This operation allows for flexible querying to
+        find comments relevant to specific criteria.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 'Optional: The unique identifier of the post to filter comments
+          by'
+        in: query
+        name: postId
+        type: string
+      - description: 'Optional: The unique identifier of the user to filter comments
+          by'
+        in: query
+        name: userId
+        type: string
+      - default: 10
+        description: 'Optional: Number of comments to return per page'
+        in: query
+        name: pageSize
+        type: integer
+      - default: 1
+        description: 'Optional: Page number for pagination'
+        in: query
+        name: pageNumber
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of comments.
+          schema:
+            items:
+              $ref: '#/definitions/dto.Comment'
+            type: array
+        "400":
+          description: Bad request if the query parameters are invalid.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+        "500":
+          description: Internal server error if there's an issue processing the query.
+          schema:
+            properties:
+              ' message':
+                type: string
+              code:
+                type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Query comments
+      tags:
+      - comments
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -2,13 +2,33 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-import React from "react";
+import React, { useEffect } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useColorMode } from "@docusaurus/theme-common";
 
 function MuiLayout(props) {
   const { isDarkTheme } = useColorMode();
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setTimeout(() => {
+        if (isDarkTheme) {
+          console.log("dark mode");
+          document.body.classList.add("dark-mode");
+        } else {
+          document.body.classList.remove("dark-mode");
+        }
+      }, 200);
+    };
+
+    updateTheme();
+
+    return () => {
+      document.body.classList.remove("dark-mode");
+    };
+  }, [isDarkTheme]);
+
   const theme = React.useMemo(
     () =>
       createTheme({

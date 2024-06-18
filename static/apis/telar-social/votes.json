@@ -1,0 +1,504 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This API handles operations related to the Votes microservice, including voting functionalities among users.",
+        "title": "Votes micro API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "dev@telar.dev"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/red-gold/ts-serverless/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "social.faas.telar.dev",
+    "basePath": "/votes",
+    "paths": {
+        "/": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "This endpoint allows users to retrieve all votes associated with a specific post ID, with pagination support.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "votes"
+                ],
+                "summary": "Retrieve votes by post ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "The UUID of the post to retrieve votes for",
+                        "name": "postId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved votes for the post.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Vote"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the query parameters are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the post ID does not exist or has no associated votes.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue retrieving the votes.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "This endpoint allows users to update their vote for a specific item or choice. It is an essential feature of the Votes microservice, enabling users to change their voting preferences.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "votes"
+                ],
+                "summary": "Update an existing vote",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The updated vote details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.VoteModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Successfully updated the vote."
+                    },
+                    "400": {
+                        "description": "Bad request if the vote details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the vote ID does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue updating the vote.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "This endpoint allows users to create a new vote for a specific item or choice. It is a key feature of the Votes microservice, enabling users to participate in voting activities.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "votes"
+                ],
+                "summary": "Create a new vote",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The vote details",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CreateVoteModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created the vote with the objectId of the new vote.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "objectId": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the vote details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue creating the vote.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/post/{postId}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "This endpoint allows users or administrators to delete all votes associated with a specific post ID. It is an important feature for managing vote data integrity and cleanliness in the Votes microservice.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "votes"
+                ],
+                "summary": "Delete votes by post ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the post whose votes are to be deleted",
+                        "name": "postId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Successfully deleted votes for the post."
+                    },
+                    "400": {
+                        "description": "Bad request if the post ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the post ID does not exist or has no associated votes.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue deleting the votes.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/votes/{voteId}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "This endpoint allows users to delete their vote for a specific item or choice. It is a crucial feature of the Votes microservice, enabling users to remove their voting preferences.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "votes"
+                ],
+                "summary": "Delete an existing vote",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the vote to delete",
+                        "name": "voteId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Successfully deleted the vote."
+                    },
+                    "400": {
+                        "description": "Bad request if the vote ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the vote ID does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue deleting the vote.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{voteId}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "This endpoint allows users to retrieve details of a specific vote by its ID. It is crucial for understanding individual voting choices within the Votes microservice.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "votes"
+                ],
+                "summary": "Retrieve a specific vote",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the vote to retrieve",
+                        "name": "voteId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the vote.",
+                        "schema": {
+                            "$ref": "#/definitions/models.VoteModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the vote ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the vote ID does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue retrieving the vote.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.Vote": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerAvatar": {
+                    "type": "string"
+                },
+                "ownerDisplayName": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "postId": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CreateVoteModel": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerAvatar": {
+                    "type": "string"
+                },
+                "ownerDisplayName": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "postId": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.VoteModel": {
+            "type": "object",
+            "properties": {
+                "created_date": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerAvatar": {
+                    "type": "string"
+                },
+                "ownerDisplayName": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "postId": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.ErrorCodeMessage": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.TelarError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/utils.ErrorCodeMessage"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

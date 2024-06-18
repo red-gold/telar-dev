@@ -1,0 +1,365 @@
+basePath: /user-rels
+definitions:
+  dto.UserRel:
+    properties:
+      circleIds:
+        items:
+          type: string
+        type: array
+      created_date:
+        type: integer
+      left:
+        $ref: '#/definitions/dto.UserRelMeta'
+      leftId:
+        type: string
+      objectId:
+        type: string
+      rel:
+        items:
+          type: string
+        type: array
+      right:
+        $ref: '#/definitions/dto.UserRelMeta'
+      rightId:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  dto.UserRelMeta:
+    properties:
+      avatar:
+        type: string
+      banner:
+        type: string
+      created_date:
+        type: integer
+      facebookId:
+        type: string
+      fullName:
+        type: string
+      instagramId:
+        type: string
+      linkedInId:
+        type: string
+      socialName:
+        type: string
+      twitterId:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.FollowModel:
+    properties:
+      circleIds:
+        items:
+          type: string
+        type: array
+      right:
+        $ref: '#/definitions/models.RelMetaModel'
+    type: object
+  models.RelCirclesModel:
+    properties:
+      circleIds:
+        items:
+          type: string
+        type: array
+      rightId:
+        type: string
+    type: object
+  models.RelMetaModel:
+    properties:
+      avatar:
+        type: string
+      fullName:
+        type: string
+      userId:
+        type: string
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This is an API to handle user relationships, including following, unfollowing,
+    and managing circles.
+  license:
+    name: MIT
+    url: https://github.com/red-gold/telar-web/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: User Relationships micro API
+  version: "1.0"
+paths:
+  /circle/{circleId}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes an existing circle identified by its ID from the user's
+        list of circles. This operation allows users to manage their social circles
+        more effectively by deleting unwanted or unused circles.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the circle to be deleted
+        in: path
+        name: circleId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the circle.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the circleId is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the circle does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue deleting the circle.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Remove a circle
+      tags:
+      - circles
+  /circles:
+    put:
+      consumes:
+      - application/json
+      description: Updates the circles associated with a user relationship by specifying
+        the user IDs and the new set of circle IDs. This operation allows for the
+        dynamic management of user relationships and their associated circles.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The new set of circle IDs to associate with the user relationship
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.RelCirclesModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the user relationship circles.
+        "400":
+          description: Bad request if the request body is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified user relationship does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue updating the user
+            relationship circles.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Update user relationship circles
+      tags:
+      - relationships
+  /follow:
+    post:
+      consumes:
+      - application/json
+      description: Establishes a follow relationship between the current user and
+        another user by their IDs. This operation allows users to follow each other,
+        enhancing social connectivity within the platform.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The details of the follow relationship to be established
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.FollowModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created the follow relationship.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the follow details are missing or not valid,
+            or if the current user cannot be retrieved.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue creating the follow
+            relationship.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Create follow relationship
+      tags:
+      - relationships
+  /followers:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of users who follow the specified user, identified
+        by userID. This operation allows users to see who is following them, enhancing
+        social connectivity and interaction.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of followers.
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserRel'
+            type: array
+        "400":
+          description: Bad request if the userID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified user does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue retrieving the followers.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Retrieve followers
+      tags:
+      - followers
+  /following:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of users that the specified user, identified by
+        userID, is following. This operation allows users to see whom they are following,
+        enhancing their social network and connectivity.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of users being followed.
+          schema:
+            items:
+              $ref: '#/definitions/dto.UserRel'
+            type: array
+        "400":
+          description: Bad request if the userID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified user does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue retrieving the following
+            list.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Retrieve following users
+      tags:
+      - following
+  /unfollow/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes an existing follow relationship between the current user
+        and another user identified by userID in the route parameter. This operation
+        allows users to manage their social connections by unfollowing others.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the user to unfollow
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully removed the follow relationship.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the userID is missing or not valid, or if the
+            current user cannot be retrieved.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the user to unfollow does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue removing the follow
+            relationship.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Remove follow relationship
+      tags:
+      - relationships
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

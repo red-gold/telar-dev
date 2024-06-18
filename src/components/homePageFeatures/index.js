@@ -1,88 +1,88 @@
-import React from 'react';
-import clsx from 'clsx';
-import styles from './HomepageFeatures.module.css';
+import React from "react";
+import clsx from "clsx";
+import styles from "./HomepageFeatures.module.css";
 
 const FeatureList = [
   {
-    title: 'Kubernetes',
-    src: 'https://miro.medium.com/max/3600/1*afkK1deEdJkuN3IhnzuzKg.png',
+    title: "Kubernetes",
+    src: "https://miro.medium.com/max/3600/1*afkK1deEdJkuN3IhnzuzKg.png",
     description: (
       <>
-        High Availability. Reducing resource costs. Ease-of-use and portability. Scalability and modularity.
+        Achieve high availability and reduce resource costs with Kubernetes. Its
+        ease-of-use and portability ensure seamless scalability and modularity
+        for your applications.
       </>
     ),
   },
   {
-    title: 'High performance with Golang',
-    src: 'https://blog.golang.org/lib/godoc/images/go-logo-blue.svg',
+    title: "High Performance with Golang",
+    src: "https://www.cdnlogo.com/logos/g/35/golang.svg",
     description: (
       <>
-        Microservices are written in Golang to have concurrency, simplicity and consistency for higher performance.
+        Experience unmatched concurrency, simplicity, and consistency.
+        Golang-powered microservices boost performance, ensuring your systems
+        run faster and more efficiently.
       </>
     ),
   },
   {
-    title: 'Microservice Architecture',
-    src: 'https://miro.medium.com/max/300/1*uOLtvuo9wxHXyETP_c085A.png',
+    title: "Microservice Architecture",
+    src: "https://miro.medium.com/max/300/1*uOLtvuo9wxHXyETP_c085A.png",
     description: (
       <>
-        Easier to build and maintain, organized around business capabilities, improved productivity and speed, flexibility in using technologies and scalability, team flexibility based on small groups.
+        Build and maintain applications with ease. Our microservice architecture
+        enhances productivity, speeds up development, and offers the flexibility
+        to use varied technologies and scale effortlessly.
       </>
     ),
   },
   {
-    title: 'Artificial intelligence',
-    src: '/img/ai.svg',
+    title: "Artificial Intelligence",
+    src: "/img/ai.svg",
     description: (
       <>
-        Smart solution at enterprise scale based on AI/ML technologies.
-      </>
-    ),
-  },
-  
-  
-  {
-    title: 'Running anywhere',
-    src: 'https://cdn3.iconfinder.com/data/icons/message-and-communication-sets/50/Icon_Cloud-512.png',
-    description: (
-      <>
-        Run your social network  anywhere on private/public cloud.
+        Implement smart solutions at an enterprise scale with advanced AI and ML
+        technologies, transforming the way you do business.
       </>
     ),
   },
   {
-    title: 'OpenFaaS Framework',
-    src: 'https://www.katacoda.com/javajon/courses/kubernetes-serverless/openfaas/assets/openfaas.png',
+    title: "Run Anywhere",
+    src: "https://cdn3.iconfinder.com/data/icons/message-and-communication-sets/50/Icon_Cloud-512.png",
     description: (
       <>
-        Avoid lock-in through the use of Docker. Run on any public or private cloud.Build both microservices & functions in any language. Legacy code and binaries.Auto-scale for demand or to zero when idle.
+        Deploy your social network on any cloud platform, be it private or
+        public, for maximum flexibility and reach.
       </>
     ),
   },
   {
-    title: 'Sync in real-time',
-    src: '/img/sync.svg',
+    title: "Real-Time Sync",
+    src: "/img/sync.svg",
     description: (
       <>
-        Enable real time data transfering for fast interaction between frontend and backend.
+        Enable real-time data transfer for seamless and fast interaction between
+        your frontend and backend, enhancing user experience and operational
+        efficiency.
       </>
     ),
   },
   {
-    title: 'ReactJS',
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png',
+    title: "ReactJS",
+    src: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png",
     description: (
       <>
-        Building modern web app. It facilitates the overall process of writing components. It boosts productivity and facilitates further maintenance.It ensures faster rendering .It guarantees stable code.
+        Build modern web apps with ReactJS. Enjoy an optimized development
+        process, increased productivity, easy maintenance, faster rendering, and
+        stable code for robust applications.
       </>
     ),
   },
-  
 ];
 
-function Feature({src, title, description}) {
+function Feature({ src, title, description }) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
         <img src={src} className={styles.featureSvg} alt={title} />
       </div>

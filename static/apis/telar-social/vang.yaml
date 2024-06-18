@@ -1,0 +1,508 @@
+basePath: /vang
+definitions:
+  dto.Message:
+    properties:
+      createdDate:
+        type: integer
+      objectId:
+        type: string
+      ownerUserId:
+        type: string
+      roomId:
+        type: string
+      text:
+        type: string
+      updatedDate:
+        type: integer
+    type: object
+  dto.Room:
+    properties:
+      createdDate:
+        type: integer
+      deactiveUsers:
+        description: '[''userId1'', ''userId2'']'
+        items:
+          type: string
+        type: array
+      lastMessage:
+        additionalProperties: true
+        description: '{''text'': ''message_text'', ''ownerId'': ''userId''}'
+        type: object
+      memberCount:
+        type: integer
+      members:
+        items:
+          type: string
+        type: array
+      messageCount:
+        type: integer
+      objectId:
+        type: string
+      readCount:
+        additionalProperties:
+          type: integer
+        description: '{''userId1'': read_count, ''userId2'': read_count}'
+        type: object
+      readDate:
+        additionalProperties:
+          type: integer
+        description: '{''userId1'': last_seen_date_time, ''userId2'': last_seen_date_time}'
+        type: object
+      readMessageId:
+        additionalProperties:
+          type: string
+        description: '{''userId1'': ''message_id_234'', ''userId2'': ''message_id_2323''}'
+        type: object
+      type:
+        description: '{0: peer, 1: multiple}'
+        type: integer
+      updatedDate:
+        type: integer
+    type: object
+  models.GetUserRoomsModel:
+    properties:
+      userId:
+        type: string
+    type: object
+  models.MessageModel:
+    properties:
+      createdDate:
+        type: integer
+      objectId:
+        type: string
+      ownerUserId:
+        type: string
+      roomId:
+        type: string
+      text:
+        type: string
+      updatedDate:
+        type: integer
+    type: object
+  models.QueryMessageModel:
+    properties:
+      gte:
+        type: integer
+      lte:
+        type: integer
+      page:
+        type: integer
+      reqUserId:
+        type: string
+      roomId:
+        type: string
+    type: object
+  models.ResUserRoomModel:
+    properties:
+      roomIds:
+        items:
+          type: string
+        type: array
+      rooms:
+        additionalProperties: true
+        type: object
+    type: object
+  models.SaveMessagesModel:
+    properties:
+      deactivePeerId:
+        type: string
+      messages:
+        items:
+          $ref: '#/definitions/models.MessageModel'
+        type: array
+      roomId:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.UpdateReadMessageModel:
+    properties:
+      amount:
+        type: integer
+      messageCreatedDate:
+        type: integer
+      messageId:
+        type: string
+      roomId:
+        type: string
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This API handles operations related to the Vang microservice, including
+    specific functionalities provided by the service.
+  license:
+    name: MIT
+    url: https://github.com/red-gold/ts-serverless/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Vang micro API
+  version: "1.0"
+paths:
+  /active-room/{roomId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of a specific active room by its ID, allowing
+        users to see if a particular room is currently active.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the room to be retrieved
+        in: path
+        name: roomId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the active room details.
+          schema:
+            $ref: '#/definitions/dto.Room'
+        "400":
+          description: Bad request if the room ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue retrieving the active
+            room.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Get a specific active room
+      tags:
+      - rooms
+  /message:
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing message in the database with the new details
+        provided in the request body. This operation allows for the modification of
+        message details such as content, sender, and other relevant information.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The new details of the message to be updated
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.MessageModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request if the new message details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue updating the message.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Update an existing message
+      tags:
+      - messages
+  /message/{messageId}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a message by its ID, removing it from the database and
+        any associated conversations or threads.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the message to be deleted
+        in: path
+        name: messageId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request if the message ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue deleting the message.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Delete a message
+      tags:
+      - messages
+  /message/query:
+    post:
+      consumes:
+      - application/json
+      description: Queries messages based on the provided search criteria in the request
+        body, allowing for filtering and retrieval of messages according to specific
+        needs.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The search criteria for querying messages
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.QueryMessageModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully queried messages.
+          schema:
+            items:
+              $ref: '#/definitions/dto.Message'
+            type: array
+        "400":
+          description: Bad request if the search criteria are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue querying the messages.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Query messages
+      tags:
+      - messages
+  /messages:
+    post:
+      consumes:
+      - application/json
+      description: Saves a new message to the specified chat room by parsing the message
+        details from the request body.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The details of the message to be saved
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.SaveMessagesModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request if the message details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue saving the message.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Save a new message
+      tags:
+      - messages
+  /read:
+    put:
+      consumes:
+      - application/json
+      description: Updates the read status of a specified message to indicate whether
+        it has been read by the recipient. This operation helps in managing the read
+        status of messages within conversations.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The details for updating the read status of the message
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateReadMessageModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request if the update details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue updating the read
+            status of the message.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Update read status of a message
+      tags:
+      - messages
+  /room/active:
+    post:
+      consumes:
+      - application/json
+      description: Activates a specified peer's room, allowing the peer to send and
+        receive messages in that room. This operation is intended to enhance communication
+        and collaboration among peers.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the room to be activated
+        in: query
+        name: roomId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request if the room details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue activating the room.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Activate a peer's room
+      tags:
+      - rooms
+  /room/deactive/{roomId}:
+    put:
+      consumes:
+      - application/json
+      description: Deactivates a specified user's room, effectively removing the user's
+        ability to send or receive messages in that room. This operation is intended
+        to ensure user privacy and security.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the room to be deactivated
+        in: path
+        name: roomId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad request if the room details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue deactivating the
+            room.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Deactivate a user's room
+      tags:
+      - rooms
+  /rooms:
+    post:
+      consumes:
+      - application/json
+      description: Retrieves all rooms associated with the user's account, allowing
+        the user to view all their rooms, including both active and inactive ones.
+        The retrieval is based on criteria specified in the models.GetUserRoomsModel.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The criteria for retrieving the user's rooms
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.GetUserRoomsModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user's rooms.
+          schema:
+            $ref: '#/definitions/models.ResUserRoomModel'
+        "400":
+          description: Bad request if the criteria for retrieving the rooms are missing
+            or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue retrieving the user's
+            rooms.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Get user's rooms
+      tags:
+      - rooms
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

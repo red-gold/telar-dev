@@ -4,7 +4,7 @@ import { themes as prismThemes } from "prism-react-renderer";
 const config = {
   title: "Telar",
   tagline:
-    "A cloud native social network engine designed based on Microservice and Serverless architecture",
+    "A cloud native social network engine designed with Microservice and Serverless architecture",
   url: "https://telar.dev",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -46,7 +46,21 @@ const config = {
             { to: "https://telar.dev/", label: "v1 - Legacy" },
           ],
         },
-
+        {
+          type: "dropdown",
+          label: "APIs",
+          position: "left",
+          items: [
+            {
+              label: "Telar Web",
+              to: "/apis/telar-web",
+            },
+            {
+              label: "Telar Social",
+              to: "/apis/telar-social",
+            },
+          ],
+        },
         {
           href: "https://github.com/telarpress/ts-ui/issues",
           position: "right",

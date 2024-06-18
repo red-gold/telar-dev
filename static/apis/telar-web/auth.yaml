@@ -1,0 +1,581 @@
+basePath: /auth
+definitions:
+  constants.UserPermissionConst:
+    enum:
+    - OnlyMe
+    - Public
+    - Circles
+    - Custom
+    type: string
+    x-enum-varnames:
+    - OnlyMe
+    - Public
+    - Circles
+    - Custom
+  models.LoginModel:
+    properties:
+      password:
+        type: string
+      responseType:
+        type: string
+      state:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserProfileModel:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      avatar:
+        type: string
+      banner:
+        type: string
+      birthday:
+        type: integer
+      companyName:
+        type: string
+      created_date:
+        type: integer
+      email:
+        type: string
+      facebookId:
+        type: string
+      followCount:
+        type: integer
+      followerCount:
+        type: integer
+      fullName:
+        type: string
+      instagramId:
+        type: string
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      permission:
+        $ref: '#/definitions/constants.UserPermissionConst'
+      postCount:
+        type: integer
+      shareCount:
+        type: integer
+      socialName:
+        type: string
+      tagLine:
+        type: string
+      twitterId:
+        type: string
+      voteCount:
+        type: integer
+      webUrl:
+        type: string
+    type: object
+  models.VerifySignupModel:
+    properties:
+      code:
+        type: string
+      responseType:
+        type: string
+      verificaitonSecret:
+        type: string
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This is an API to authenticate users
+  license:
+    name: MIT
+    url: https://github.com/red-gold/telar-web/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Auth micro API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: Renders the login page for Telar Social
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Login page HTML
+          schema:
+            type: string
+      summary: Login page
+      tags:
+      - auth
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Authenticates a user with Telar Social credentials
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Response Type
+        in: formData
+        name: responseType
+        type: string
+      - description: State
+        in: formData
+        name: state
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile and access token
+          schema:
+            properties:
+              accessToken:
+                type: string
+              redirect:
+                type: string
+              user:
+                $ref: '#/definitions/models.UserProfileModel'
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: Login with Telar Social
+      tags:
+      - auth
+  /admin/check:
+    post:
+      description: handler to check whether admin user registered
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              admin:
+                type: boolean
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: whether admin user registered
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in an admin user to the telar social platform
+      parameters:
+      - description: Login model
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              token:
+                type: string
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: Admin login
+      tags:
+      - admin
+  /admin/signup:
+    get:
+      description: return signup page in HTML
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Signup page
+          schema:
+            type: string
+      summary: return signup page
+    post:
+      description: signup the admin user and return access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              token:
+                type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: signup the admin user
+  /auth/login/telar/spa:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Authenticates a user with Telar Social credentials for Single Page
+        Applications
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: Response Type
+        in: formData
+        name: responseType
+        type: string
+      - description: State
+        in: formData
+        name: state
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile and access token
+          schema:
+            properties:
+              accessToken:
+                type: string
+              redirect:
+                type: string
+              user:
+                $ref: '#/definitions/models.UserProfileModel'
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: Login with Telar Social (SPA)
+      tags:
+      - auth
+  /github:
+    get:
+      description: Redirects the user to GitHub for authentication
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirect to GitHub
+          schema:
+            type: string
+      summary: Login with GitHub
+      tags:
+      - auth
+  /google:
+    get:
+      description: Redirects the user to Google for authentication
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirect to Google
+          schema:
+            type: string
+      summary: Login with Google
+      tags:
+      - auth
+  /oauth2/authorized:
+    get:
+      description: Handles OAuth 2.0 redirects and exchanges authorization code for
+        access token
+      parameters:
+      - description: Authorization code
+        in: query
+        name: code
+        required: true
+        type: string
+      - description: State parameter
+        in: query
+        name: state
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile and access token
+          schema:
+            properties:
+              URL:
+                type: string
+            type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: OAuth 2.0 Redirect Handler
+      tags:
+      - auth
+  /password/change:
+    post:
+      description: change user password
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: change user password
+  /password/forget:
+    get:
+      description: return forget password page
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Login page HTML
+          schema:
+            type: string
+      summary: return forget password page
+    post:
+      description: send forget password link to the user email
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Login page HTML
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: send forget password email
+  /password/reset/{verifyId}:
+    get:
+      description: return reset password page
+      parameters:
+      - description: The verify id that sent to user
+        in: path
+        name: verifyId
+        required: true
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Login page HTML
+          schema:
+            type: string
+      summary: return reset password page
+    post:
+      description: get a password from user and set as a new password
+      parameters:
+      - description: The verify id that sent to user
+        in: path
+        name: verifyId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: reset user password
+  /signup:
+    post:
+      description: return a token to verify user signup process
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              token:
+                type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: create a signup token
+  /signup/verify:
+    post:
+      consumes:
+      - multipart/form-data
+      description: handler verify the signup token to register user
+      parameters:
+      - description: 6 digits code
+        in: formData
+        maxLength: 6
+        minLength: 6
+        name: code
+        required: true
+        type: string
+      - description: JWT token
+        in: formData
+        name: verificaitonSecret
+        required: true
+        type: string
+      - description: Type of response for SPA/SSR
+        enum:
+        - spa
+        - ssr
+        in: formData
+        name: responseType
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: verify signup token
+      tags:
+      - Auth
+  /verify-signup:
+    post:
+      consumes:
+      - application/json
+      description: Verifies the signup process by validating the token and saving
+        user data
+      parameters:
+      - description: Verify Signup Model
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifySignupModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.UserProfileModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      summary: Verify signup process
+      tags:
+      - Auth
+swagger: "2.0"

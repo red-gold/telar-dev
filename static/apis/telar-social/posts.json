@@ -1,0 +1,1150 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API to handle user posts, including creating, updating, and deleting posts.",
+        "title": "Posts micro API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "dev@telar.dev"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/red-gold/telar-web/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "social.faas.telar.dev",
+    "basePath": "/posts",
+    "paths": {
+        "/": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Updates an existing post with new information provided by the user. This includes updating text content, album information, and other metadata associated with the post.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Update a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Post content to be updated",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PostModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the post.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the post data is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized if the user is not authenticated.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue updating the post.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Allows for querying posts based on various filters such as tags, author, date range, etc. This operation is designed to retrieve a list of posts that match the specified criteria.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Query posts",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The query parameters to filter posts",
+                        "name": "query",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.PostQueryModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the list of posts matching the query.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Post"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the query parameters are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue processing the query.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/count": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Increments the score of a specified comment by a given amount. This can be used to update the score of comments in response to user interactions such as likes or upvotes.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comments"
+                ],
+                "summary": "Increment comment score",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Comment count model with the ID and increment amount",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CommentCountModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully incremented the comment's score.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the comment data is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized if the user is not authenticated.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified comment does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue incrementing the score.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/disable": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Disables a specified comment, effectively hiding it from view. This action can be used to moderate content or respond to user reports of inappropriate content.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comments"
+                ],
+                "summary": "Disable comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Comment disable model with the ID and disable status",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DisableCommentModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully disabled the comment.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the comment data is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized if the user is not authenticated.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified comment does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue disabling the comment.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/index": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Initializes the post index to ensure efficient querying and retrieval of post data. This operation is crucial for setting up the social network's infrastructure to support scalable and fast searches.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Initialize post index",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully initialized the post index.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue initializing the post index.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/score": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Increments the score of a specified entity by a given amount. This can be used to update the score of posts, comments, or any other score-based entity.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "score"
+                ],
+                "summary": "Increment score",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Entity ID and increment amount",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ScoreModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully incremented the score.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the request body is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized if the user is not authenticated.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified entity does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue incrementing the score.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/share/disable": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Disables sharing for a specified entity, making it private or restricting further sharing. This action can be used for privacy reasons or to comply with content policies.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sharing"
+                ],
+                "summary": "Disable sharing",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Share disable model with the entity ID and disable status",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DisableSharingModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully disabled sharing for the entity.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the entity data is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized if the user is not authenticated.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the specified entity does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue disabling sharing.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/urlkey/{key}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves a post by its unique URL key, returning detailed information about the post, including content, author, and metadata.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Retrieve a post by URL key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The unique URL key of the post",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the post",
+                        "schema": {
+                            "$ref": "#/definitions/models.PostModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the URL key is missing or not valid",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the post does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue processing the request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Generates a unique URL key for a new post. This key can be used to create SEO-friendly URLs for posts.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Generate a URL key for a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The Post ID to generate the url-key for the post",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully generated the URL key for the post.",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "urlKey": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the URL key is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue generating the URL key.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/{postId}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves a post by its unique identifier (ID) and returns detailed information about the post, including its content, author, and associated metadata.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Get a post",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The unique identifier of the post to retrieve",
+                        "name": "postId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the post.",
+                        "schema": {
+                            "$ref": "#/definitions/models.PostModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the post ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the post does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue processing the request.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Deletes a specific post based on its unique identifier. This operation is designed to remove a post from the blog permanently.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "posts"
+                ],
+                "summary": "Delete a post by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The unique identifier of the post to be deleted",
+                        "name": "postId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted the post.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the post ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found if the post does not exist.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue deleting the post.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.Post": {
+            "type": "object",
+            "properties": {
+                "accessUserList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "album": {
+                    "$ref": "#/definitions/dto.PostAlbum"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "commentCounter": {
+                    "type": "integer"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deletedDate": {
+                    "type": "integer"
+                },
+                "disableComments": {
+                    "type": "boolean"
+                },
+                "disableSharing": {
+                    "type": "boolean"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageFullPath": {
+                    "type": "string"
+                },
+                "last_updated": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerAvatar": {
+                    "type": "string"
+                },
+                "ownerDisplayName": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "permission": {
+                    "$ref": "#/definitions/github_com_red-gold_ts-serverless_constants.UserPermissionConst"
+                },
+                "postTypeId": {
+                    "type": "integer"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "urlKey": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "video": {
+                    "type": "string"
+                },
+                "viewCount": {
+                    "type": "integer"
+                },
+                "votes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.PostAlbum": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "coverId": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_red-gold_ts-serverless_constants.UserPermissionConst": {
+            "type": "string",
+            "enum": [
+                "OnlyMe",
+                "Public",
+                "Circles",
+                "Custom"
+            ],
+            "x-enum-varnames": [
+                "OnlyMe",
+                "Public",
+                "Circles",
+                "Custom"
+            ]
+        },
+        "handlers.PostQueryModel": {
+            "type": "object",
+            "properties": {
+                "owner": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.CommentCountModel": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "postId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CreatePostModel": {
+            "type": "object",
+            "properties": {
+                "accessUserList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "album": {
+                    "$ref": "#/definitions/models.PostAlbumModel"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "commentCounter": {
+                    "type": "integer"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deletedDate": {
+                    "type": "integer"
+                },
+                "disableComments": {
+                    "type": "boolean"
+                },
+                "disableSharing": {
+                    "type": "boolean"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageFullPath": {
+                    "type": "string"
+                },
+                "last_updated": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerAvatar": {
+                    "type": "string"
+                },
+                "ownerDisplayName": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "permission": {
+                    "$ref": "#/definitions/github_com_red-gold_ts-serverless_constants.UserPermissionConst"
+                },
+                "postTypeId": {
+                    "type": "integer"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "urlKey": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "video": {
+                    "type": "string"
+                },
+                "viewCount": {
+                    "type": "integer"
+                },
+                "votes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "models.DisableCommentModel": {
+            "type": "object",
+            "properties": {
+                "postId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.DisableSharingModel": {
+            "type": "object",
+            "properties": {
+                "postId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "models.PostAlbumModel": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "cover": {
+                    "type": "string"
+                },
+                "coverId": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PostModel": {
+            "type": "object",
+            "properties": {
+                "accessUserList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "album": {
+                    "$ref": "#/definitions/models.PostAlbumModel"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "commentCounter": {
+                    "type": "integer"
+                },
+                "created_date": {
+                    "type": "integer"
+                },
+                "deleted": {
+                    "type": "boolean"
+                },
+                "deletedDate": {
+                    "type": "integer"
+                },
+                "disableComments": {
+                    "type": "boolean"
+                },
+                "disableSharing": {
+                    "type": "boolean"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "imageFullPath": {
+                    "type": "string"
+                },
+                "last_updated": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerAvatar": {
+                    "type": "string"
+                },
+                "ownerDisplayName": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "permission": {
+                    "$ref": "#/definitions/github_com_red-gold_ts-serverless_constants.UserPermissionConst"
+                },
+                "postTypeId": {
+                    "type": "integer"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "thumbnail": {
+                    "type": "string"
+                },
+                "urlKey": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "video": {
+                    "type": "string"
+                },
+                "viewCount": {
+                    "type": "integer"
+                },
+                "votes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.ScoreModel": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "postId": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.ErrorCodeMessage": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.TelarError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/utils.ErrorCodeMessage"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

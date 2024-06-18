@@ -1,0 +1,777 @@
+basePath: /posts
+definitions:
+  dto.Post:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      album:
+        $ref: '#/definitions/dto.PostAlbum'
+      body:
+        type: string
+      commentCounter:
+        type: integer
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      disableComments:
+        type: boolean
+      disableSharing:
+        type: boolean
+      image:
+        type: string
+      imageFullPath:
+        type: string
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      permission:
+        $ref: '#/definitions/github_com_red-gold_ts-serverless_constants.UserPermissionConst'
+      postTypeId:
+        type: integer
+      score:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      thumbnail:
+        type: string
+      urlKey:
+        type: string
+      version:
+        type: string
+      video:
+        type: string
+      viewCount:
+        type: integer
+      votes:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  dto.PostAlbum:
+    properties:
+      count:
+        type: integer
+      cover:
+        type: string
+      coverId:
+        type: string
+      photos:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  github_com_red-gold_ts-serverless_constants.UserPermissionConst:
+    enum:
+    - OnlyMe
+    - Public
+    - Circles
+    - Custom
+    type: string
+    x-enum-varnames:
+    - OnlyMe
+    - Public
+    - Circles
+    - Custom
+  handlers.PostQueryModel:
+    properties:
+      owner:
+        items:
+          type: string
+        type: array
+      page:
+        type: integer
+      search:
+        type: string
+      type:
+        type: integer
+    type: object
+  models.CommentCountModel:
+    properties:
+      count:
+        type: integer
+      postId:
+        type: string
+    type: object
+  models.CreatePostModel:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      album:
+        $ref: '#/definitions/models.PostAlbumModel'
+      body:
+        type: string
+      commentCounter:
+        type: integer
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      disableComments:
+        type: boolean
+      disableSharing:
+        type: boolean
+      image:
+        type: string
+      imageFullPath:
+        type: string
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      permission:
+        $ref: '#/definitions/github_com_red-gold_ts-serverless_constants.UserPermissionConst'
+      postTypeId:
+        type: integer
+      score:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      thumbnail:
+        type: string
+      urlKey:
+        type: string
+      version:
+        type: string
+      video:
+        type: string
+      viewCount:
+        type: integer
+      votes:
+        additionalProperties:
+          type: boolean
+        type: object
+    type: object
+  models.DisableCommentModel:
+    properties:
+      postId:
+        type: string
+      status:
+        type: boolean
+    type: object
+  models.DisableSharingModel:
+    properties:
+      postId:
+        type: string
+      status:
+        type: boolean
+    type: object
+  models.PostAlbumModel:
+    properties:
+      count:
+        type: integer
+      cover:
+        type: string
+      coverId:
+        type: string
+      photos:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  models.PostModel:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      album:
+        $ref: '#/definitions/models.PostAlbumModel'
+      body:
+        type: string
+      commentCounter:
+        type: integer
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      disableComments:
+        type: boolean
+      disableSharing:
+        type: boolean
+      image:
+        type: string
+      imageFullPath:
+        type: string
+      last_updated:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      permission:
+        $ref: '#/definitions/github_com_red-gold_ts-serverless_constants.UserPermissionConst'
+      postTypeId:
+        type: integer
+      score:
+        type: integer
+      tags:
+        items:
+          type: string
+        type: array
+      thumbnail:
+        type: string
+      urlKey:
+        type: string
+      version:
+        type: string
+      video:
+        type: string
+      viewCount:
+        type: integer
+      votes:
+        additionalProperties:
+          type: string
+        type: object
+    type: object
+  models.ScoreModel:
+    properties:
+      count:
+        type: integer
+      postId:
+        type: string
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This is an API to handle user posts, including creating, updating,
+    and deleting posts.
+  license:
+    name: MIT
+    url: https://github.com/red-gold/telar-web/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Posts micro API
+  version: "1.0"
+paths:
+  /:
+    post:
+      consumes:
+      - application/json
+      description: Allows for querying posts based on various filters such as tags,
+        author, date range, etc. This operation is designed to retrieve a list of
+        posts that match the specified criteria.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The query parameters to filter posts
+        in: body
+        name: query
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.PostQueryModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of posts matching the query.
+          schema:
+            items:
+              $ref: '#/definitions/dto.Post'
+            type: array
+        "400":
+          description: Bad request if the query parameters are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue processing the query.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Query posts
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing post with new information provided by the user.
+        This includes updating text content, album information, and other metadata
+        associated with the post.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Post content to be updated
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.PostModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the post.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the post data is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue updating the post.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Update a post
+      tags:
+      - posts
+  /{postId}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a specific post based on its unique identifier. This operation
+        is designed to remove a post from the blog permanently.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique identifier of the post to be deleted
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the post.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the post ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the post does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue deleting the post.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Delete a post by ID
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a post by its unique identifier (ID) and returns detailed
+        information about the post, including its content, author, and associated
+        metadata.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique identifier of the post to retrieve
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the post.
+          schema:
+            $ref: '#/definitions/models.PostModel'
+        "400":
+          description: Bad request if the post ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the post does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue processing the request.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Get a post
+      tags:
+      - posts
+  /comment/count:
+    post:
+      consumes:
+      - application/json
+      description: Increments the score of a specified comment by a given amount.
+        This can be used to update the score of comments in response to user interactions
+        such as likes or upvotes.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Comment count model with the ID and increment amount
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentCountModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully incremented the comment's score.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the comment data is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified comment does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue incrementing the
+            score.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Increment comment score
+      tags:
+      - comments
+  /comment/disable:
+    put:
+      consumes:
+      - application/json
+      description: Disables a specified comment, effectively hiding it from view.
+        This action can be used to moderate content or respond to user reports of
+        inappropriate content.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Comment disable model with the ID and disable status
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.DisableCommentModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully disabled the comment.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the comment data is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified comment does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue disabling the comment.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Disable comment
+      tags:
+      - comments
+  /index:
+    post:
+      consumes:
+      - application/json
+      description: Initializes the post index to ensure efficient querying and retrieval
+        of post data. This operation is crucial for setting up the social network's
+        infrastructure to support scalable and fast searches.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully initialized the post index.
+          schema:
+            type: string
+        "500":
+          description: Internal server error if there's an issue initializing the
+            post index.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Initialize post index
+      tags:
+      - posts
+  /score:
+    put:
+      consumes:
+      - application/json
+      description: Increments the score of a specified entity by a given amount. This
+        can be used to update the score of posts, comments, or any other score-based
+        entity.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Entity ID and increment amount
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.ScoreModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully incremented the score.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the request body is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified entity does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue incrementing the
+            score.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Increment score
+      tags:
+      - score
+  /share/disable:
+    put:
+      consumes:
+      - application/json
+      description: Disables sharing for a specified entity, making it private or restricting
+        further sharing. This action can be used for privacy reasons or to comply
+        with content policies.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Share disable model with the entity ID and disable status
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.DisableSharingModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully disabled sharing for the entity.
+          schema:
+            type: string
+        "400":
+          description: Bad request if the entity data is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized if the user is not authenticated.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the specified entity does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue disabling sharing.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Disable sharing
+      tags:
+      - sharing
+  /urlkey/{key}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a post by its unique URL key, returning detailed information
+        about the post, including content, author, and metadata.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The unique URL key of the post
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the post
+          schema:
+            $ref: '#/definitions/models.PostModel'
+        "400":
+          description: Bad request if the URL key is missing or not valid
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the post does not exist
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue processing the request
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Retrieve a post by URL key
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Generates a unique URL key for a new post. This key can be used
+        to create SEO-friendly URLs for posts.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The Post ID to generate the url-key for the post
+        in: path
+        name: key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully generated the URL key for the post.
+          schema:
+            properties:
+              urlKey:
+                type: string
+            type: object
+        "400":
+          description: Bad request if the URL key is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue generating the URL
+            key.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Generate a URL key for a post
+      tags:
+      - posts
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

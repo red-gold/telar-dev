@@ -1,0 +1,37 @@
+[
+	{
+		"name": "circles",
+		"apiPath": "/circles",
+		"description": "This is an API to handle user circles"
+	},
+	{
+		"name": "comments",
+		"apiPath": "/comments",
+		"description": "This is an API to handle user comments on posts"
+	},
+	{
+		"name": "gallery",
+		"apiPath": "/gallery",
+		"description": "This is an API to handle media operations"
+	},
+	{
+		"name": "posts",
+		"apiPath": "/posts",
+		"description": "This is an API to handle user posts, including creating, updating, and deleting posts."
+	},
+	{
+		"name": "user-rels",
+		"apiPath": "/user-rels",
+		"description": "This is an API to handle user relationships, including following, unfollowing, and managing circles."
+	},
+	{
+		"name": "vang",
+		"apiPath": "/vang",
+		"description": "This API handles operations related to the Vang microservice, including specific functionalities provided by the service."
+	},
+	{
+		"name": "votes",
+		"apiPath": "/votes",
+		"description": "This API handles operations related to the Votes microservice, including voting functionalities among users."
+	}
+]

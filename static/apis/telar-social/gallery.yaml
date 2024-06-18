@@ -1,0 +1,522 @@
+basePath: /media
+definitions:
+  constants.UserPermissionConst:
+    enum:
+    - OnlyMe
+    - Public
+    - Circles
+    - Custom
+    type: string
+    x-enum-varnames:
+    - OnlyMe
+    - Public
+    - Circles
+    - Custom
+  dto.Media:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      albumId:
+        type: string
+      caption:
+        type: string
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      directory:
+        type: string
+      fileName:
+        type: string
+      fullPath:
+        type: string
+      height:
+        type: integer
+      last_updated:
+        type: integer
+      meta:
+        type: string
+      objectId:
+        type: string
+      ownerUserId:
+        type: string
+      permission:
+        $ref: '#/definitions/constants.UserPermissionConst'
+      thumbnail:
+        type: string
+      url:
+        type: string
+      width:
+        type: integer
+    type: object
+  models.CreateMediaListModel:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/models.MediaModel'
+        type: array
+    type: object
+  models.CreateMediaModel:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      albumId:
+        type: string
+      caption:
+        type: string
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      directory:
+        type: string
+      fileName:
+        type: string
+      fullPath:
+        type: string
+      height:
+        type: integer
+      last_updated:
+        type: integer
+      meta:
+        type: string
+      objectId:
+        type: string
+      ownerUserId:
+        type: string
+      permission:
+        $ref: '#/definitions/constants.UserPermissionConst'
+      thumbnail:
+        type: string
+      url:
+        type: string
+      width:
+        type: integer
+    type: object
+  models.MediaModel:
+    properties:
+      accessUserList:
+        items:
+          type: string
+        type: array
+      albumId:
+        type: string
+      caption:
+        type: string
+      created_date:
+        type: integer
+      deleted:
+        type: boolean
+      deletedDate:
+        type: integer
+      directory:
+        type: string
+      fileName:
+        type: string
+      fullPath:
+        type: string
+      height:
+        type: integer
+      last_updated:
+        type: integer
+      meta:
+        type: string
+      objectId:
+        type: string
+      ownerUserId:
+        type: string
+      permission:
+        $ref: '#/definitions/constants.UserPermissionConst'
+      thumbnail:
+        type: string
+      url:
+        type: string
+      width:
+        type: integer
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This is an API to handle media operations
+  license:
+    name: MIT
+    url: https://github.com/red-gold/ts-serverless/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Media micro API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves album entries based on search criteria including album
+        ID, page, and limit for pagination.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Album's UUID to filter albums
+        in: query
+        name: album
+        required: true
+        type: string
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of albums to return per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Array of album objects matching the query criteria
+          schema:
+            items:
+              $ref: '#/definitions/dto.Media'
+            type: array
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Query albums
+      tags:
+      - Album
+    post:
+      consumes:
+      - application/json
+      description: Creates a new media entry in the system.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Create Media Model
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateMediaModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Media successfully created
+          schema:
+            properties:
+              objectId:
+                type: string
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Create new media
+      tags:
+      - Media
+    put:
+      consumes:
+      - application/json
+      description: Updates the information of a media item with the provided details
+        contained in the request body.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Media item update information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.MediaModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - Media item updated successfully
+          schema:
+            type: string
+        "400":
+          description: Bad Request - Invalid request body
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized - Authentication failed
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not Found - Media item not found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Update media item
+      tags:
+      - Media
+  /dir/{dir}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a directory and its contents from the system.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the directory to delete
+        in: path
+        name: dir
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Directory successfully deleted
+          schema:
+            type: string
+        "400":
+          description: Invalid directory ID
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Directory not found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Delete directory
+      tags:
+      - Directory
+    get:
+      consumes:
+      - application/json
+      description: Retrieves all media items that are stored within a specified directory.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The directory path to query media items from
+        in: path
+        name: dir
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: An array of media items found in the specified directory
+          schema:
+            items:
+              $ref: '#/definitions/dto.Media'
+            type: array
+        "400":
+          description: Invalid directory path
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: No media items found in the specified directory
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Get media items by directory
+      tags:
+      - Media
+  /id/{mediaId}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a media entry from the system.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the media to delete
+        in: path
+        name: mediaId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Media successfully deleted
+          schema:
+            type: string
+        "400":
+          description: Invalid media ID
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Delete media
+      tags:
+      - Media
+    get:
+      consumes:
+      - application/json
+      description: Retrieves details of a specific media item by its unique identifier.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Unique identifier of the media item
+        in: path
+        name: mediaId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Media item details
+          schema:
+            $ref: '#/definitions/models.MediaModel'
+        "400":
+          description: Invalid media ID
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Media item not found
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Get media item
+      tags:
+      - Media
+  /list:
+    post:
+      consumes:
+      - application/json
+      description: Creates multiple media items with the details provided in the request
+        body.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Media list creation request
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateMediaListModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - Media items created successfully
+        "400":
+          description: Bad Request - Invalid request body
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "401":
+          description: Unauthorized - Authentication failed
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Create multiple media items
+      tags:
+      - Media
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

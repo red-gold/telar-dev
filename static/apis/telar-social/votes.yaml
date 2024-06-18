@@ -1,0 +1,344 @@
+basePath: /votes
+definitions:
+  dto.Vote:
+    properties:
+      created_date:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      postId:
+        type: string
+      type:
+        type: integer
+    type: object
+  models.CreateVoteModel:
+    properties:
+      created_date:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      postId:
+        type: string
+      type:
+        type: integer
+    type: object
+  models.VoteModel:
+    properties:
+      created_date:
+        type: integer
+      objectId:
+        type: string
+      ownerAvatar:
+        type: string
+      ownerDisplayName:
+        type: string
+      ownerUserId:
+        type: string
+      postId:
+        type: string
+      type:
+        type: integer
+    type: object
+  utils.ErrorCodeMessage:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  utils.TelarError:
+    properties:
+      error:
+        $ref: '#/definitions/utils.ErrorCodeMessage'
+    type: object
+host: social.faas.telar.dev
+info:
+  contact:
+    email: dev@telar.dev
+    name: API Support
+  description: This API handles operations related to the Votes microservice, including
+    voting functionalities among users.
+  license:
+    name: MIT
+    url: https://github.com/red-gold/ts-serverless/blob/master/LICENSE
+  termsOfService: http://swagger.io/terms/
+  title: Votes micro API
+  version: "1.0"
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint allows users to retrieve all votes associated with
+        a specific post ID, with pagination support.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: The UUID of the post to retrieve votes for
+        in: query
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved votes for the post.
+          schema:
+            items:
+              $ref: '#/definitions/dto.Vote'
+            type: array
+        "400":
+          description: Bad request if the query parameters are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the post ID does not exist or has no associated
+            votes.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue retrieving the votes.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Retrieve votes by post ID
+      tags:
+      - votes
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows users to create a new vote for a specific
+        item or choice. It is a key feature of the Votes microservice, enabling users
+        to participate in voting activities.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The vote details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateVoteModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created the vote with the objectId of the new
+            vote.
+          schema:
+            properties:
+              objectId:
+                type: string
+            type: object
+        "400":
+          description: Bad request if the vote details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue creating the vote.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Create a new vote
+      tags:
+      - votes
+    put:
+      consumes:
+      - application/json
+      description: This endpoint allows users to update their vote for a specific
+        item or choice. It is an essential feature of the Votes microservice, enabling
+        users to change their voting preferences.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The updated vote details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/models.VoteModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - Successfully updated the vote.
+        "400":
+          description: Bad request if the vote details are missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the vote ID does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue updating the vote.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Update an existing vote
+      tags:
+      - votes
+  /{voteId}:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint allows users to retrieve details of a specific vote
+        by its ID. It is crucial for understanding individual voting choices within
+        the Votes microservice.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the vote to retrieve
+        in: path
+        name: voteId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the vote.
+          schema:
+            $ref: '#/definitions/models.VoteModel'
+        "400":
+          description: Bad request if the vote ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the vote ID does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue retrieving the vote.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Retrieve a specific vote
+      tags:
+      - votes
+  /post/{postId}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint allows users or administrators to delete all votes
+        associated with a specific post ID. It is an important feature for managing
+        vote data integrity and cleanliness in the Votes microservice.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the post whose votes are to be deleted
+        in: path
+        name: postId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - Successfully deleted votes for the post.
+        "400":
+          description: Bad request if the post ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the post ID does not exist or has no associated
+            votes.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue deleting the votes.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Delete votes by post ID
+      tags:
+      - votes
+  /votes/{voteId}:
+    delete:
+      consumes:
+      - application/json
+      description: This endpoint allows users to delete their vote for a specific
+        item or choice. It is a crucial feature of the Votes microservice, enabling
+        users to remove their voting preferences.
+      parameters:
+      - default: Bearer <Add_token_here>
+        description: Authentication
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: The ID of the vote to delete
+        in: path
+        name: voteId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK - Successfully deleted the vote.
+        "400":
+          description: Bad request if the vote ID is missing or not valid.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "404":
+          description: Not found if the vote ID does not exist.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+        "500":
+          description: Internal server error if there's an issue deleting the vote.
+          schema:
+            $ref: '#/definitions/utils.TelarError'
+      security:
+      - JWT: []
+      summary: Delete an existing vote
+      tags:
+      - votes
+securityDefinitions:
+  JWT:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

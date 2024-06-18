@@ -1,0 +1,746 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This API handles operations related to the Vang microservice, including specific functionalities provided by the service.",
+        "title": "Vang micro API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "dev@telar.dev"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/red-gold/ts-serverless/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "social.faas.telar.dev",
+    "basePath": "/vang",
+    "paths": {
+        "/active-room/{roomId}": {
+            "get": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves details of a specific active room by its ID, allowing users to see if a particular room is currently active.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "summary": "Get a specific active room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the room to be retrieved",
+                        "name": "roomId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the active room details.",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Room"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the room ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue retrieving the active room.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/message": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Updates an existing message in the database with the new details provided in the request body. This operation allows for the modification of message details such as content, sender, and other relevant information.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Update an existing message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The new details of the message to be updated",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MessageModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request if the new message details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue updating the message.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/message/query": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Queries messages based on the provided search criteria in the request body, allowing for filtering and retrieval of messages according to specific needs.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Query messages",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The search criteria for querying messages",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.QueryMessageModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully queried messages.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Message"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the search criteria are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue querying the messages.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/message/{messageId}": {
+            "delete": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Deletes a message by its ID, removing it from the database and any associated conversations or threads.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Delete a message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the message to be deleted",
+                        "name": "messageId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request if the message ID is missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue deleting the message.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/messages": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Saves a new message to the specified chat room by parsing the message details from the request body.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Save a new message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The details of the message to be saved",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SaveMessagesModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request if the message details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue saving the message.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/read": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Updates the read status of a specified message to indicate whether it has been read by the recipient. This operation helps in managing the read status of messages within conversations.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "messages"
+                ],
+                "summary": "Update read status of a message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The details for updating the read status of the message",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateReadMessageModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request if the update details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue updating the read status of the message.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/room/active": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Activates a specified peer's room, allowing the peer to send and receive messages in that room. This operation is intended to enhance communication and collaboration among peers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "summary": "Activate a peer's room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the room to be activated",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request if the room details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue activating the room.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/room/deactive/{roomId}": {
+            "put": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Deactivates a specified user's room, effectively removing the user's ability to send or receive messages in that room. This operation is intended to ensure user privacy and security.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "summary": "Deactivate a user's room",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The ID of the room to be deactivated",
+                        "name": "roomId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad request if the room details are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue deactivating the room.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        },
+        "/rooms": {
+            "post": {
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "description": "Retrieves all rooms associated with the user's account, allowing the user to view all their rooms, including both active and inactive ones. The retrieval is based on criteria specified in the models.GetUserRoomsModel.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "rooms"
+                ],
+                "summary": "Get user's rooms",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd_token_here\u003e",
+                        "description": "Authentication",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "The criteria for retrieving the user's rooms",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.GetUserRoomsModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the user's rooms.",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResUserRoomModel"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request if the criteria for retrieving the rooms are missing or not valid.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error if there's an issue retrieving the user's rooms.",
+                        "schema": {
+                            "$ref": "#/definitions/utils.TelarError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.Message": {
+            "type": "object",
+            "properties": {
+                "createdDate": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "roomId": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "updatedDate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.Room": {
+            "type": "object",
+            "properties": {
+                "createdDate": {
+                    "type": "integer"
+                },
+                "deactiveUsers": {
+                    "description": "['userId1', 'userId2']",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "lastMessage": {
+                    "description": "{'text': 'message_text', 'ownerId': 'userId'}",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "memberCount": {
+                    "type": "integer"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "messageCount": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "readCount": {
+                    "description": "{'userId1': read_count, 'userId2': read_count}",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "readDate": {
+                    "description": "{'userId1': last_seen_date_time, 'userId2': last_seen_date_time}",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer"
+                    }
+                },
+                "readMessageId": {
+                    "description": "{'userId1': 'message_id_234', 'userId2': 'message_id_2323'}",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "type": {
+                    "description": "{0: peer, 1: multiple}",
+                    "type": "integer"
+                },
+                "updatedDate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.GetUserRoomsModel": {
+            "type": "object",
+            "properties": {
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MessageModel": {
+            "type": "object",
+            "properties": {
+                "createdDate": {
+                    "type": "integer"
+                },
+                "objectId": {
+                    "type": "string"
+                },
+                "ownerUserId": {
+                    "type": "string"
+                },
+                "roomId": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "updatedDate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.QueryMessageModel": {
+            "type": "object",
+            "properties": {
+                "gte": {
+                    "type": "integer"
+                },
+                "lte": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "reqUserId": {
+                    "type": "string"
+                },
+                "roomId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResUserRoomModel": {
+            "type": "object",
+            "properties": {
+                "roomIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "rooms": {
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            }
+        },
+        "models.SaveMessagesModel": {
+            "type": "object",
+            "properties": {
+                "deactivePeerId": {
+                    "type": "string"
+                },
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MessageModel"
+                    }
+                },
+                "roomId": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateReadMessageModel": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "integer"
+                },
+                "messageCreatedDate": {
+                    "type": "integer"
+                },
+                "messageId": {
+                    "type": "string"
+                },
+                "roomId": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.ErrorCodeMessage": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "utils.TelarError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/utils.ErrorCodeMessage"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
