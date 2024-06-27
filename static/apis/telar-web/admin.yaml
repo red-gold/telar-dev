@@ -37,7 +37,7 @@ paths:
             type: string
       summary: Display login page
       tags:
-      - auth
+      - Login
     post:
       consumes:
       - application/x-www-form-urlencoded
@@ -70,7 +70,7 @@ paths:
             $ref: '#/definitions/utils.TelarError'
       summary: Admin login
       tags:
-      - auth
+      - Login
   /setup:
     get:
       description: Renders the setup page for the application

@@ -72,15 +72,6 @@ definitions:
       webUrl:
         type: string
     type: object
-  models.VerifySignupModel:
-    properties:
-      code:
-        type: string
-      responseType:
-        type: string
-      verificaitonSecret:
-        type: string
-    type: object
   utils.ErrorCodeMessage:
     properties:
       code:
@@ -132,6 +123,8 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: whether admin user registered
+      tags:
+      - Admin
   /admin/login:
     post:
       consumes:
@@ -176,6 +169,8 @@ paths:
           schema:
             type: string
       summary: return signup page
+      tags:
+      - Admin
     post:
       description: signup the admin user and return access token
       produces:
@@ -201,6 +196,8 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: signup the admin user
+      tags:
+      - Admin
   /login:
     get:
       description: Renders the login page for Telar Social
@@ -213,7 +210,7 @@ paths:
             type: string
       summary: Login page
       tags:
-      - auth
+      - Login
     post:
       consumes:
       - application/x-www-form-urlencoded
@@ -261,7 +258,7 @@ paths:
             $ref: '#/definitions/utils.TelarError'
       summary: Login with Telar Social
       tags:
-      - auth
+      - Login
   /login/github:
     get:
       description: Redirects the user to GitHub for authentication
@@ -274,7 +271,7 @@ paths:
             type: string
       summary: Login with GitHub
       tags:
-      - auth
+      - Login
   /login/google:
     get:
       description: Redirects the user to Google for authentication
@@ -287,7 +284,7 @@ paths:
             type: string
       summary: Login with Google
       tags:
-      - auth
+      - Login
   /oauth2/authorized:
     get:
       description: Handles OAuth 2.0 redirects and exchanges authorization code for
@@ -323,7 +320,7 @@ paths:
             $ref: '#/definitions/utils.TelarError'
       summary: OAuth 2.0 Redirect Handler
       tags:
-      - auth
+      - Login
   /password/change:
     post:
       description: change user password
@@ -347,6 +344,8 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: change user password
+      tags:
+      - Password
   /password/forget:
     get:
       description: return forget password page
@@ -358,6 +357,8 @@ paths:
           schema:
             type: string
       summary: return forget password page
+      tags:
+      - Password
     post:
       description: send forget password link to the user email
       produces:
@@ -380,6 +381,8 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: send forget password email
+      tags:
+      - Password
   /password/reset/{verifyId}:
     get:
       description: return reset password page
@@ -397,6 +400,8 @@ paths:
           schema:
             type: string
       summary: return reset password page
+      tags:
+      - Password
     post:
       description: get a password from user and set as a new password
       parameters:
@@ -425,7 +430,9 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: reset user password
-  /signup/token:
+      tags:
+      - Password
+  /signup:
     post:
       consumes:
       - application/json
@@ -480,7 +487,7 @@ paths:
             $ref: '#/definitions/utils.TelarError'
       summary: Sign up token generation
       tags:
-      - auth
+      - Signup
   /signup/verify:
     post:
       consumes:
@@ -526,36 +533,5 @@ paths:
             $ref: '#/definitions/utils.TelarError'
       summary: verify signup token
       tags:
-      - Auth
-  /verify-signup:
-    post:
-      consumes:
-      - application/json
-      description: Verifies the signup process by validating the token and saving
-        user data
-      parameters:
-      - description: Verify Signup Model
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/models.VerifySignupModel'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.UserProfileModel'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.TelarError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/utils.TelarError'
-      summary: Verify signup process
-      tags:
-      - Auth
+      - Signup
 swagger: "2.0"

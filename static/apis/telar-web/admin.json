@@ -24,7 +24,7 @@
                     "text/html"
                 ],
                 "tags": [
-                    "auth"
+                    "Login"
                 ],
                 "summary": "Display login page",
                 "responses": {
@@ -45,7 +45,7 @@
                     "text/html"
                 ],
                 "tags": [
-                    "auth"
+                    "Login"
                 ],
                 "summary": "Admin login",
                 "parameters": [
