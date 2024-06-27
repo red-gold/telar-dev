@@ -106,67 +106,6 @@ info:
   title: Auth micro API
   version: "1.0"
 paths:
-  /:
-    get:
-      description: Renders the login page for Telar Social
-      produces:
-      - text/html
-      responses:
-        "200":
-          description: Login page HTML
-          schema:
-            type: string
-      summary: Login page
-      tags:
-      - auth
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: Authenticates a user with Telar Social credentials
-      parameters:
-      - description: Username
-        in: formData
-        name: username
-        required: true
-        type: string
-      - description: Password
-        in: formData
-        name: password
-        required: true
-        type: string
-      - description: Response Type
-        in: formData
-        name: responseType
-        type: string
-      - description: State
-        in: formData
-        name: state
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User profile and access token
-          schema:
-            properties:
-              accessToken:
-                type: string
-              redirect:
-                type: string
-              user:
-                $ref: '#/definitions/models.UserProfileModel'
-            type: object
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/utils.TelarError'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/utils.TelarError'
-      summary: Login with Telar Social
-      tags:
-      - auth
   /admin/check:
     post:
       description: handler to check whether admin user registered
@@ -262,12 +201,23 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: signup the admin user
-  /auth/login/telar/spa:
+  /login:
+    get:
+      description: Renders the login page for Telar Social
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: Login page HTML
+          schema:
+            type: string
+      summary: Login page
+      tags:
+      - auth
     post:
       consumes:
       - application/x-www-form-urlencoded
-      description: Authenticates a user with Telar Social credentials for Single Page
-        Applications
+      description: Authenticates a user with Telar Social credentials
       parameters:
       - description: Username
         in: formData
@@ -309,10 +259,10 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.TelarError'
-      summary: Login with Telar Social (SPA)
+      summary: Login with Telar Social
       tags:
       - auth
-  /github:
+  /login/github:
     get:
       description: Redirects the user to GitHub for authentication
       produces:
@@ -325,7 +275,7 @@ paths:
       summary: Login with GitHub
       tags:
       - auth
-  /google:
+  /login/google:
     get:
       description: Redirects the user to Google for authentication
       produces:
@@ -475,32 +425,62 @@ paths:
           schema:
             $ref: '#/definitions/utils.TelarError'
       summary: reset user password
-  /signup:
+  /signup/token:
     post:
-      description: return a token to verify user signup process
+      consumes:
+      - application/json
+      description: Handles the generation of a signup token for email or phone verification.
+      parameters:
+      - description: Full name of the user
+        in: formData
+        name: fullName
+        required: true
+        type: string
+      - description: Email address of the user
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Password for the new user account
+        in: formData
+        name: newPassword
+        required: true
+        type: string
+      - description: Type of verification (email or phone)
+        in: formData
+        name: verifyType
+        required: true
+        type: string
+      - description: Google reCAPTCHA response token
+        in: formData
+        name: g-recaptcha-response
+        required: true
+        type: string
+      - description: Response type indicating the desired response format (default
+          or spa)
+        in: formData
+        name: responseType
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: OK
-          schema:
-            properties:
-              token:
-                type: string
-            type: object
-        "400":
-          description: Bad Request
+          description: Returns a JSON object containing the generated token if responseType
+            is 'spa', or renders a verification page otherwise.
           schema:
             $ref: '#/definitions/utils.TelarError'
-        "404":
-          description: Not Found
+        "400":
+          description: Returns a JSON object describing the missing or invalid parameters.
           schema:
             $ref: '#/definitions/utils.TelarError'
         "500":
-          description: Internal Server Error
+          description: Returns a JSON object indicating an internal server error,
+            such as failure to create a user or verify captcha.
           schema:
             $ref: '#/definitions/utils.TelarError'
-      summary: create a signup token
+      summary: Sign up token generation
+      tags:
+      - auth
   /signup/verify:
     post:
       consumes:

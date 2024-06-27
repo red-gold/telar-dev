@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "social.telar.dev",
+    "host": "social.faas.telar.dev",
     "basePath": "/actions",
     "paths": {
         "/dispatch/{roomId}": {

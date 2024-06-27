@@ -47,7 +47,7 @@ definitions:
       error:
         $ref: '#/definitions/utils.ErrorCodeMessage'
     type: object
-host: social.telar.dev
+host: social.faas.telar.dev
 info:
   contact:
     email: dev@telar.dev
